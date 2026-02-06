@@ -11,3 +11,5 @@ sources:
         identifier: pokemons__abilities
       - name: types
         identifier: pokemons__types
+      - name: stats
+        identifier: pokemons__stats
