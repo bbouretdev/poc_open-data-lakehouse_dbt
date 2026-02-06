@@ -1,0 +1,8 @@
+version: 2
+
+sources:
+  - name: bronze
+    database: hive_json_scw
+    schema: notion
+    tables:
+      - name: sprints_bronze_generated

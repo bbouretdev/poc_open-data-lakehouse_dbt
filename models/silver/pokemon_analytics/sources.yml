@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+  - name: pokemons
+    database: hive_json_scw
+    schema: pokemons
+    tables:
+      - name: pokemons
+        identifier: pokemons
+      - name: abilities
+        identifier: pokemons__abilities
+      - name: types
+        identifier: pokemons__types
