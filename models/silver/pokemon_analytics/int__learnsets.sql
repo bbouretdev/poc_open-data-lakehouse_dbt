@@ -1,25 +1,30 @@
-{{ config(alias='learnsets') }}
-{{ config(materialized='table') }}
+{{
+    config(
+      materialized = 'incremental',
+      unique_key='id',
+      incremental_strategy='merge',
+    )
+}}
 
 with pokemons__main as (
   select 
-    $1:_dlt_id::string as dlt_id,
-    $1:id::int as id,
-    $1:species__name::string as species_name
-  from {{ source('pokemon', 'pokemon_pokemons__main') }}
+    CAST(_dlt_id AS VARCHAR) as dlt_id,
+    CAST(id AS INTEGER) as id,
+    CAST(species__name AS VARCHAR) as species_name
+  from {{ source('bronze', 'pokemons') }}
 ),
 
 pokemons__moves as (
   select 
-    $1:_dlt_parent_id::string as dlt_parent_id,
-    $1:move__name::string as move_name
-  from {{ source('pokemon', 'pokemon_pokemons__moves') }}
+    CAST(_dlt_parent_id AS VARCHAR) as dlt_parent_id,
+    CAST(move__name AS VARCHAR) as move_name
+  from {{ source('bronze', 'pokemons__moves') }}
 ),
 
 final as (
     select
         p.species_name as species_name,
-        p.id::int as id,
+        p.id as id,
         pm.move_name as move_name
     from pokemons__main p
     left join pokemons__moves pm
@@ -27,7 +32,7 @@ final as (
 )
 
 select 
-    id::int as id,
+    id as id,
     species_name,
-    move_name::varchar as move_name
+    move_name as move_name
 from final

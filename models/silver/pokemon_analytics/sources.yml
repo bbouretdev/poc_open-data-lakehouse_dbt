@@ -1,7 +1,7 @@
 version: 2
 
 sources:
-  - name: pokemons
+  - name: bronze
     database: hive_json_scw
     schema: pokemons
     tables:
@@ -9,3 +9,4 @@ sources:
       - name: pokemons__abilities
       - name: pokemons__types
       - name: pokemons__stats
+      - name: pokemons__moves

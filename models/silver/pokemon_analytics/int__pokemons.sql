@@ -1,36 +1,41 @@
-{{ config(alias='pokemons') }}
-{{ config(materialized='table') }}
+{{
+    config(
+      materialized = 'incremental',
+      unique_key='id',
+      incremental_strategy='merge',
+    )
+}}
 
 with pokemons__main as (
   select 
-    $1:_dlt_id::string as dlt_id,
-    $1:species__name::string as species_name
-  from {{ source('pokemon', 'pokemons') }}
+    CAST(_dlt_id AS VARCHAR) as dlt_id,
+    CAST(species__name AS VARCHAR) as species_name
+  from {{ source('bronze', 'pokemons') }}
 ),
 
 pokemons__abilities as (
   select 
-    $1:_dlt_parent_id::string as dlt_parent_id,
-    $1:ability__name::string as ability_name,
-    $1:is_hidden::boolean as is_hidden,
-    $1:slot::int as slot
-  from {{ source('pokemon', 'pokemon_pokemons__abilities') }}
+    CAST(_dlt_parent_id AS VARCHAR) as dlt_parent_id,
+    CAST(ability__name AS VARCHAR) as ability_name,
+    CAST(is_hidden AS BOOLEAN) as is_hidden,
+    CAST(slot AS INTEGER) as slot
+  from {{ source('bronze', 'pokemons__abilities') }}
 ),
 
 pokemons__stats as (
   select 
-    $1:_dlt_parent_id::string as dlt_parent_id,
-    $1:stat__name::string as stat_name,
-    $1:base_stat as base_stat
-  from {{ source('pokemon', 'pokemon_pokemons__stats') }}
+    CAST(_dlt_parent_id AS VARCHAR) as dlt_parent_id,
+    CAST(stat__name AS VARCHAR) as stat_name,
+    base_stat
+  from {{ source('bronze', 'pokemons__stats') }}
 ),
 
 pokemons__types as (
   select 
-    $1:_dlt_parent_id::string as dlt_parent_id,
-    $1:type__name::string as type_name,
-    $1:slot::int as slot
-  from {{ source('pokemon', 'pokemon_pokemons__types') }}
+    CAST(_dlt_parent_id AS VARCHAR) as dlt_parent_id,
+    CAST(type__name AS VARCHAR) as type_name,
+    CAST(slot AS INTEGER) as slot
+  from {{ source('bronze', 'pokemons__types') }}
 ),
 
 abilities_pivot as (
