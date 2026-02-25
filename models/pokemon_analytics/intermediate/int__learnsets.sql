@@ -1,11 +1,3 @@
-{{
-    config(
-      materialized = 'incremental',
-      unique_key='id',
-      incremental_strategy='merge',
-    )
-}}
-
 with pokemons__main as (
   select 
     CAST(_dlt_id AS VARCHAR) as dlt_id,
@@ -32,6 +24,7 @@ final as (
 )
 
 select 
+    to_hex(md5(to_utf8(CAST(id AS VARCHAR) || '|' || move_name))) as unique_key,
     id as id,
     species_name,
     move_name as move_name

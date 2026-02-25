@@ -1,15 +1,10 @@
-{{
-    config(
-      materialized = 'incremental',
-      unique_key='id',
-      incremental_strategy='merge',
-    )
-}}
-
 with pokemons__main as (
   select 
     CAST(_dlt_id AS VARCHAR) as dlt_id,
-    CAST(species__name AS VARCHAR) as species_name
+    CAST(id AS INTEGER) as id,
+    CAST(species__name AS VARCHAR) as species_name,
+    CAST(height AS INTEGER) / 10 as height,
+    CAST(weight AS INTEGER) / 10 as weight
   from {{ source('bronze', 'pokemons') }}
 ),
 
@@ -72,7 +67,10 @@ types_pivot as (
 
 final as (
     select
+        p.id,
         p.species_name,
+        p.height,
+        p.weight,
         a.ability_1,
         a.ability_2,
         a.ability_hidden,
