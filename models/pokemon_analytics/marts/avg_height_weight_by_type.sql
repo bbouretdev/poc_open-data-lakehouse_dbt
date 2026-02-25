@@ -1,5 +1,4 @@
 {{ config(
-    materialized='table',
     alias='avg_height_weight_by_type'
 ) }}
 
