@@ -24,6 +24,18 @@ clean-targets:         # directories to be removed by `dbt clean`
 
 models:
   transformation_engine:
-    silver:
-       +schema: "silver"
-       +views_enabled: false
+    +materialized: view
+    pokemon_analytics:
+      staging:
+        +schema: bronze
+        +views_enabled: false
+        +materialized: ephemeral
+      intermediate:
+        +schema: silver
+        +views_enabled: false
+        +materialized: ephemeral
+      marts:
+        +schema: gold
+        +views_enabled: false
+        +materialized: incremental
+        +incremental_strategy: merge
